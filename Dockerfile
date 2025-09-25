@@ -5,9 +5,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DEBIAN_FRONTEND=noninteractive
 
-# System deps needed to compile some python packages
+# System deps needed for scientific/python packages and Qt
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ python3-dev build-essential pkg-config libpq-dev libmariadb-dev curl \
+    gcc g++ make cmake \
+    python3-dev build-essential pkg-config \
+    libpq-dev libmariadb-dev \
+    libjpeg-dev zlib1g-dev libpng-dev libfreetype6-dev \
+    libatlas-base-dev liblapack-dev gfortran \
+    libx11-dev libxcb1 libx11-xcb-dev libxrender-dev libxi-dev libxtst-dev libxext-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
