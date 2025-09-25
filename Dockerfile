@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev libmariadb-dev-compat \
     libjpeg-dev zlib1g-dev libpng-dev libfreetype6-dev \
     libopenblas-dev liblapack-dev gfortran \
+    qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -53,5 +54,5 @@ USER appuser
 
 EXPOSE 8000
 
-# Start the app (change if your entry differs)
+# Start the app
 CMD ["python", "-m", "fincept_terminal.FinceptTerminalStart"]
