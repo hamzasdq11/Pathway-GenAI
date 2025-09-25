@@ -1,10 +1,10 @@
-# Contributing to Fincept Terminals
+# Contributing to EquiNovas
 
-Welcome to the Fincept Terminal community! Your contributions help build the future of open-source financial technology.
+Welcome to the EquiNova community! Your contributions help build the future of open-source financial technology.
 
 ## Project Architecture Overview
 
-Fincept Terminal uses a **Hybrid MVP (Model-View-Presenter) + Services** architecture designed for massive scalability and modular development. This architecture allows thousands of developers to contribute independently without breaking existing functionality.
+EquiNova uses a **Hybrid MVP (Model-View-Presenter) + Services** architecture designed for massive scalability and modular development. This architecture allows thousands of developers to contribute independently without breaking existing functionality.
 
 ### Why This Architecture?
 
@@ -17,7 +17,7 @@ Fincept Terminal uses a **Hybrid MVP (Model-View-Presenter) + Services** archite
 ## Directory Structure
 
 ```
-/fincept_terminal
+/equinova_terminal
 ├── /models               # Data structures and entities
 │   ├── /analytics
 │   │   └── analytics_models.py

@@ -1,6 +1,6 @@
 ---
 name: 🐛 Bug Report
-about: Report a bug or unexpected behavior in Fincept Terminal
+about: Report a bug or unexpected behavior in EquiNova
 title: "[BUG] "
 labels: "type:bug, status:triage"
 assignees: ""
@@ -73,7 +73,7 @@ Paste console output here if applicable...
 <!-- Information about your environment -->
 - **OS:** [e.g. Ubuntu 20.04, macOS 13.0, Windows 11]
 - **Python Version:** [e.g. 3.11.0]
-- **Fincept Terminal Version:** [e.g. 1.2.3]
+- **EquiNova Version:** [e.g. 1.2.3]
 - **Docker Version:** [e.g. 20.10.17]
 - **Browser (if applicable):** [e.g. Chrome 108.0.5359.71]
 - **Terminal/Shell:** [e.g. bash, zsh, PowerShell]

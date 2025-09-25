@@ -1,6 +1,6 @@
-# 🎉 Contribute to Fincept Terminal 🚀
+# 🎉 Contribute to EquiNova 🚀
 
-Hey there, awesome developer! 👋 Want to make Fincept Terminal even cooler? We’d love your help! Here’s how you can contribute:
+Hey there, awesome developer! 👋 Want to make EquiNova even cooler? We’d love your help! Here’s how you can contribute:
 
 ## 🚀 Where We Need You
 
@@ -20,9 +20,9 @@ Hey there, awesome developer! 👋 Want to make Fincept Terminal even cooler? We
    - Connect stock brokers so users can **buy/sell directly** from the terminal.  
    - Work on **country-specific broker plugins**.
 
-📖 **Fincept Docs**
+📖 **EquiNova Docs**
 
-   - Create and maintain comprehensive documentation for Fincept Terminal.
+   - Create and maintain comprehensive documentation for EquiNova.
    - Cover installation, API usage, troubleshooting, and developer guides.
    - Keep the documentation up-to-date with new features.
 
@@ -32,7 +32,7 @@ Hey there, awesome developer! 👋 Want to make Fincept Terminal even cooler? We
 
 1️⃣ **Fork** this repo & clone it:  
    ```bash
-   git clone https://github.com/your-username/FinceptTerminal.git
+   git clone https://github.com/your-username/EquiNova.git
    ```
 
 2️⃣ **Create a new branch** for your feature:  
@@ -53,8 +53,8 @@ Hey there, awesome developer! 👋 Want to make Fincept Terminal even cooler? We
 
 ## 📝 Guidelines
 
-✔ **Bug Reports:** [File an issue](https://github.com/Fincept-Corporation/FinceptTerminal/issues/new).  
-✔ **Feature Requests:** Let’s talk! Open a [GitHub Discussion](https://github.com/Fincept-Corporation/FinceptTerminal/discussions).  
+✔ **Bug Reports:** [File an issue](https://github.com/EquiNova-Corporation/EquiNova/issues/new).  
+✔ **Feature Requests:** Let’s talk! Open a [GitHub Discussion](https://github.com/EquiNova-Corporation/EquiNova/discussions).  
 ✔ **Code Contributions:** Keep it clean & simple. Well-documented code = ❤️.  
 
 🚀 **Join the movement!** Let’s build the future of finance together. Have questions? Ping us at [dev@fincept.in](mailto:dev@fincept.in).

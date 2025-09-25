@@ -1,6 +1,6 @@
 ---
 name: ✨ Improvement Suggestion
-about: Suggest enhancements or improvements to existing features in Fincept Terminal
+about: Suggest enhancements or improvements to existing features in EquiNova
 title: "[IMPROVE] "
 labels: "type:enhancement, status:triage"
 assignees: ""
@@ -229,7 +229,7 @@ As a [type of user], I want [improvement] so that [benefit/outcome].
 <!-- Your current environment (if relevant to the improvement) -->
 - **OS:** [e.g. Ubuntu 20.04, macOS 13.0, Windows 11]
 - **Python Version:** [e.g. 3.11.0]
-- **Fincept Terminal Version:** [e.g. 1.2.3]
+- **EquiNova Version:** [e.g. 1.2.3]
 - **Usage Context:** [e.g. local development, production deployment]
 
 ## ⏰ Timeline Preference
@@ -251,4 +251,4 @@ As a [type of user], I want [improvement] so that [benefit/outcome].
 
 ---
 
-**Thank you for helping us improve Fincept Terminal! ✨**
+**Thank you for helping us improve EquiNova! ✨**

@@ -1,19 +1,19 @@
-# Fincept Terminal ✨
+# EquiNova ✨
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-C06524)](https://github.com/Fincept-Corporation/FinceptTerminal/blob/main/LICENSE.txt)
+[![License: MIT](https://img.shields.io/badge/license-MIT-C06524)](https://github.com/EquiNova-Corporation/EquiNova/blob/main/LICENSE.txt)
 [![PyPI version](https://badge.fury.io/py/fincept-terminal.svg)](https://badge.fury.io/py/fincept-terminal)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Hits](https://hits.sh/github.com/Fincept-Corporation/FinceptTerminal.svg?label=Visits)](https://hits.sh/github.com/Fincept-Corporation/FinceptTerminal/)
+[![Hits](https://hits.sh/github.com/EquiNova-Corporation/EquiNova.svg?label=Visits)](https://hits.sh/github.com/EquiNova-Corporation/EquiNova/)
 [![PyPI Downloads](https://static.pepy.tech/badge/fincept-terminal)](https://pepy.tech/projects/fincept-terminal)
 
-[![Twitter](https://img.shields.io/badge/-Twitter-1DA1F2?style=flat-square&logo=twitter&logoColor=white)](https://twitter.com/intent/tweet?text=Check%20out%20FinceptTerminal&url=https%3A//github.com/Fincept-Corporation/FinceptTerminal/) [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/sharing/share-offsite/?url=https%3A//github.com/Fincept-Corporation/FinceptTerminal/) [![Facebook](https://img.shields.io/badge/-Facebook-1877F2?style=flat-square&logo=facebook&logoColor=white)](https://www.facebook.com/sharer/sharer.php?u=https%3A//github.com/Fincept-Corporation/FinceptTerminal/) [![Instagram](https://img.shields.io/badge/-Instagram-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/) [![Reddit](https://img.shields.io/badge/-Reddit-FF4500?style=flat-square&logo=reddit&logoColor=white)](https://www.reddit.com/submit?url=https%3A//github.com/Fincept-Corporation/FinceptTerminal/&title=FinceptTerminal) [![WhatsApp](https://img.shields.io/badge/-WhatsApp-25D366?style=flat-square&logo=whatsapp&logoColor=white)](https://api.whatsapp.com/send?text=Check%20out%20FinceptTerminal%3A%20https%3A//github.com/Fincept-Corporation/FinceptTerminal/)
+[![Twitter](https://img.shields.io/badge/-Twitter-1DA1F2?style=flat-square&logo=twitter&logoColor=white)](https://twitter.com/intent/tweet?text=Check%20out%20EquiNova&url=https%3A//github.com/EquiNova-Corporation/EquiNova/) [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/sharing/share-offsite/?url=https%3A//github.com/EquiNova-Corporation/EquiNova/) [![Facebook](https://img.shields.io/badge/-Facebook-1877F2?style=flat-square&logo=facebook&logoColor=white)](https://www.facebook.com/sharer/sharer.php?u=https%3A//github.com/EquiNova-Corporation/EquiNova/) [![Instagram](https://img.shields.io/badge/-Instagram-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/) [![Reddit](https://img.shields.io/badge/-Reddit-FF4500?style=flat-square&logo=reddit&logoColor=white)](https://www.reddit.com/submit?url=https%3A//github.com/EquiNova-Corporation/EquiNova/&title=EquiNova) [![WhatsApp](https://img.shields.io/badge/-WhatsApp-25D366?style=flat-square&logo=whatsapp&logoColor=white)](https://api.whatsapp.com/send?text=Check%20out%20EquiNova%3A%20https%3A//github.com/EquiNova-Corporation/EquiNova/)
 
 
 ## 🚀 Major Platform Upgrade: Moving to Tauri
 
-> **Important Update:** Fincept Terminal is transitioning from DearPyGUI to **Tauri** for enhanced performance and development capabilities.
+> **Important Update:** EquiNova is transitioning from DearPyGUI to **Tauri** for enhanced performance and development capabilities.
 
 ### Why the Switch?
 
@@ -37,7 +37,7 @@
 - **Q3 2025**: Tauri beta release alongside existing version
 - **Q4 2025**: Complete migration with feature parity + new capabilities
 
-**[Try the new Tauri version →](https://github.com/Fincept-Corporation/FinceptTerminal/tree/tauri-migration)** *(Development branch)*
+**[Try the new Tauri version →](https://github.com/EquiNova-Corporation/EquiNova/tree/tauri-migration)** *(Development branch)*
 
 
 
@@ -49,19 +49,19 @@
 
 [🚀 Quick Start](#-installation) • [✨ Features](#-features) • [📱 Desktop App](#-desktop-app) • [🤝 Contribute](#-become-a-contributor)
 
-![Fincept Terminal](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/Geopolitics.png)
+![EquiNova](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/Geopolitics.png)
 
 </div>
 
 ---
 
-## 🎯 What is Fincept Terminal?
+## 🎯 What is EquiNova?
 
-**Fincept Terminal** is a comprehensive GUI-based financial analysis platform that democratizes professional investment tools. With an intuitive interface and powerful analytics engine, it's designed for investors, traders, and financial professionals who demand institutional-grade insights without the institutional price tag.
+**EquiNova** is a comprehensive GUI-based financial analysis platform that democratizes professional investment tools. With an intuitive interface and powerful analytics engine, it's designed for investors, traders, and financial professionals who demand institutional-grade insights without the institutional price tag.
 
-### 🌟 Why Choose Fincept Terminal?
+### 🌟 Why Choose EquiNova?
 
-| Traditional Platforms | Fincept Terminal |
+| Traditional Platforms | EquiNova |
 |----------------------|------------------|
 | 💸 Expensive subscriptions | 🆓 **Completely Free** |
 | 🏢 Enterprise-only access | 👤 **Available to Everyone** |
@@ -112,12 +112,12 @@ fincept-env\Scripts\activate
 # Activate (macOS/Linux)  
 source fincept-env/bin/activate
 
-# Install Fincept Terminal
+# Install EquiNova
 pip install fincept-terminal
 ```
 
 ### **Option 3: Desktop App** 
-[![Download for Windows](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/download-windows.svg)](http://product.fincept.in/FinceptTerminalV2Alpha.exe)
+[![Download for Windows](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/download-windows.svg)](http://product.fincept.in/EquiNovaV2Alpha.exe)
 
 ## 🎮 Usage
 
@@ -141,47 +141,47 @@ fincept  # Single command to launch the GUI
 
 | Chat Module |
 |:-----------:|
-| ![Chat](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/Chat.png) |
+| ![Chat](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/Chat.png) |
 | Interactive AI chat interface |
 
 | Dashboard |
 |:---------:|
-| ![Dashboard](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/Dashboard.png) |
+| ![Dashboard](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/Dashboard.png) |
 | Real-time market overview and analytics |
 
 | Economy |
 |:-------:|
-| ![Economy](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/Economy.png) |
+| ![Economy](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/Economy.png) |
 | Global economic indicators and data |
 
 | Equity Research |
 |:---------------:|
-| ![Equity](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/Equity.png) |
+| ![Equity](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/Equity.png) |
 | Comprehensive stock analysis tools |
 
 | Forum |
 |:-----:|
-| ![Forum](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/Forum.png) |
+| ![Forum](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/Forum.png) |
 | Community discussions and insights |
 
 | Geopolitics |
 |:-----------:|
-| ![Geopolitics](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/Geopolitics.png) |
+| ![Geopolitics](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/Geopolitics.png) |
 | Global risk assessment and monitoring |
 
 | Global Trade |
 |:------------:|
-| ![GlobalTrade](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/GlobalTrade.png) |
+| ![GlobalTrade](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/GlobalTrade.png) |
 | International trade flow analysis |
 
 | Markets |
 |:-------:|
-| ![Markets](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/Markets.png) |
+| ![Markets](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/Markets.png) |
 | Live market data and trading tools |
 
 | Trade Analysis |
 |:--------------:|
-| ![TradeAnalysis](https://raw.githubusercontent.com/Fincept-Corporation/FinceptTerminal/main/images/TradeAnalysis.png) |
+| ![TradeAnalysis](https://raw.githubusercontent.com/EquiNova-Corporation/EquiNova/main/images/TradeAnalysis.png) |
 | Advanced trade analytics and insights |
 
 </div>
@@ -212,21 +212,21 @@ fincept  # Single command to launch the GUI
 - 📚 **Improve Docs** - Help others learn and use the platform
 
 ### 📋 **Quick Links**
-- 📖 [**Contributing Guidelines**](https://github.com/Fincept-Corporation/FinceptTerminal/blob/main/CONTRIBUTING.md)
-- 🐛 [**Report a Bug**](https://github.com/Fincept-Corporation/FinceptTerminal/issues/new?template=bug_report.md)
-- ✨ [**Request Feature**](https://github.com/Fincept-Corporation/FinceptTerminal/issues/new?template=feature_request.md)
-- 💬 [**Discussions**](https://github.com/Fincept-Corporation/FinceptTerminal/discussions)
+- 📖 [**Contributing Guidelines**](https://github.com/EquiNova-Corporation/EquiNova/blob/main/CONTRIBUTING.md)
+- 🐛 [**Report a Bug**](https://github.com/EquiNova-Corporation/EquiNova/issues/new?template=bug_report.md)
+- ✨ [**Request Feature**](https://github.com/EquiNova-Corporation/EquiNova/issues/new?template=feature_request.md)
+- 💬 [**Discussions**](https://github.com/EquiNova-Corporation/EquiNova/discussions)
 
 ## 📈 Star History
 
 **⭐ STAR THE REPO AND SHARE THE PROJECT ❤️**
 
 <div align="center">
-<a href="https://star-history.com/#Fincept-Corporation/FinceptTerminal&Date">
+<a href="https://star-history.com/#EquiNova-Corporation/EquiNova&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Fincept-Corporation/FinceptTerminal&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Fincept-Corporation/FinceptTerminal&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Fincept-Corporation/FinceptTerminal&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=EquiNova-Corporation/EquiNova&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=EquiNova-Corporation/EquiNova&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=EquiNova-Corporation/EquiNova&type=Date" />
  </picture>
 </a>
 </div>
@@ -237,13 +237,13 @@ fincept  # Single command to launch the GUI
 
 ### 💬 **Community & Support**
 
-[![GitHub Discussions](https://img.shields.io/badge/GitHub-Discussions-181717?style=for-the-badge&logo=github)](https://github.com/Fincept-Corporation/FinceptTerminal/discussions)
+[![GitHub Discussions](https://img.shields.io/badge/GitHub-Discussions-181717?style=for-the-badge&logo=github)](https://github.com/EquiNova-Corporation/EquiNova/discussions)
 [![Email Support](https://img.shields.io/badge/Email-dev@fincept.in-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:dev@fincept.in)
 [![Contact Form](https://img.shields.io/badge/Contact-Form-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://forms.gle/DUsDHwxBNRVstYMi6)
 
 ### 🚀 **Get Started Today**
 
-[**📥 Download Desktop App**](http://product.fincept.in/FinceptTerminalV2Alpha.exe) • [**📦 Install via pip**](#-installation) • [**📖 Read Docs**](https://docs.fincept.in/)
+[**📥 Download Desktop App**](http://product.fincept.in/EquiNovaV2Alpha.exe) • [**📦 Install via pip**](#-installation) • [**📖 Read Docs**](https://docs.fincept.in/)
 
 ---
 

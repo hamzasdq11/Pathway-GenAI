@@ -55,4 +55,4 @@ USER appuser
 EXPOSE 8000
 
 # Start the app
-CMD ["python", "-m", "fincept_terminal.FinceptTerminalStart"]
+CMD ["python", "-m", "equinova_terminal.EquiNovaStart"]

@@ -93,7 +93,7 @@ Paste profiling output, performance logs, or benchmark results here
 - **RAM:** [e.g. 16GB]
 - **Storage:** [e.g. SSD, HDD]
 - **Python Version:** [e.g. 3.11.0]
-- **Fincept Terminal Version:** [e.g. 1.2.3]
+- **EquiNova Version:** [e.g. 1.2.3]
 
 **Configuration:**
 - **Docker:** [ ] Yes [ ] No (Version: _______)
@@ -166,4 +166,4 @@ Paste profiling output, performance logs, or benchmark results here
 
 ---
 
-**Thank you for helping us improve Fincept Terminal's performance! ⚡**
+**Thank you for helping us improve EquiNova's performance! ⚡**

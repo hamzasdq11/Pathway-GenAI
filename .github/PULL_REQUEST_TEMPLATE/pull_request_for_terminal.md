@@ -218,7 +218,7 @@ Please pay special attention to:
 
 ---
 
-**Thanks for contributing to Fincept Terminal! 🚀**
+**Thanks for contributing to EquiNova! 🚀**
 
 <!-- 
 Reviewer Guidelines:

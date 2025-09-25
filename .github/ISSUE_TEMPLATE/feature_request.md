@@ -1,6 +1,6 @@
 ---
 name: 🌟 Feature Request
-about: Suggest a new feature or enhancement for Fincept Terminal
+about: Suggest a new feature or enhancement for EquiNova
 title: "[FEATURE] "
 labels: "type:feature, status:triage"
 assignees: ""
@@ -121,7 +121,7 @@ assignees: ""
 <!-- Your current environment (if relevant) -->
 - **OS:** [e.g. Ubuntu 20.04, macOS 13.0, Windows 11]
 - **Python Version:** [e.g. 3.11.0]
-- **Fincept Terminal Version:** [e.g. 1.2.3]
+- **EquiNova Version:** [e.g. 1.2.3]
 - **Docker Version:** [e.g. 20.10.17]
 
 ---

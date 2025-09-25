@@ -212,4 +212,4 @@ assignees: ""
 
 ---
 
-**Thank you for helping us improve Fincept Terminal's documentation! 📚**
+**Thank you for helping us improve EquiNova's documentation! 📚**

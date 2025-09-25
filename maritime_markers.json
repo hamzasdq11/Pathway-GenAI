@@ -1,0 +1,38 @@
+[
+  {
+    "lat": 19.076,
+    "lng": 72.8777,
+    "title": "Mumbai Port",
+    "type": "Port"
+  },
+  {
+    "lat": 22.5726,
+    "lng": 88.3639,
+    "title": "Kolkata Port",
+    "type": "Port"
+  },
+  {
+    "lat": 13.0827,
+    "lng": 80.2707,
+    "title": "Chennai Port",
+    "type": "Port"
+  },
+  {
+    "lat": 9.9312,
+    "lng": 76.2673,
+    "title": "Cochin Port",
+    "type": "Port"
+  },
+  {
+    "lat": 19.076,
+    "lng": 72.8777,
+    "title": "Mumbai Port",
+    "type": "Port"
+  },
+  {
+    "lat": 31.2304,
+    "lng": 121.4737,
+    "title": "Shanghai Port",
+    "type": "Port"
+  }
+]
