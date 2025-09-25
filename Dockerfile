@@ -1,70 +1,52 @@
 # Multi-stage build to reduce final image size
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive
 
-# Install build dependencies in builder stage
+# System deps needed to compile some python packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    g++ \
-    python3-dev \
-    build-essential \
-    pkg-config \
-    libpq-dev \
-    libmariadb-dev \
-    curl \
+    gcc g++ python3-dev build-essential pkg-config libpq-dev libmariadb-dev curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PDM
-RUN pip install --no-cache-dir pdm
-
-# Set working directory
 WORKDIR /app
 
-# Copy dependency files
-COPY pyproject.toml README.md ./
+# Copy minimal files needed for dependency install
+COPY requirements.txt README.md ./
 
-# Install dependencies to a specific location
-RUN pdm install --no-editable --prod --no-self
+# Create a virtualenv and install deps into it
+RUN python -m venv /opt/venv \
+ && /opt/venv/bin/pip install --upgrade pip \
+ && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Final stage - runtime image
+# ----- Runtime image -----
 FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
-ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    DEBIAN_FRONTEND=noninteractive \
+    PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /app
 
-# Install only runtime dependencies (much smaller list)
+# Only runtime shared libs
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq5 \
-    libmariadb3 \
-    curl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apt/archives/* \
-    && rm -rf /tmp/* \
-    && rm -rf /var/tmp/*
+    libpq5 libmariadb3 curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy Python packages from builder stage
-COPY --from=builder /app/.venv /app/.venv
+# Bring in the prebuilt virtualenv
+COPY --from=builder /opt/venv /opt/venv
 
-# Copy application code
+# App code
 COPY . .
 
-# Make sure we can run the virtual environment
-ENV PATH="/app/.venv/bin:$PATH"
-
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN chown -R appuser:appuser /app
+# Non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser && chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000
 
-# Run the application
+# Start the app (change if your entry differs)
 CMD ["python", "-m", "fincept_terminal.FinceptTerminalStart"]
