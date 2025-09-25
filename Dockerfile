@@ -9,10 +9,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc g++ make cmake \
     python3-dev build-essential pkg-config \
-    libpq-dev libmariadb-dev \
+    libpq-dev libmariadb-dev-compat \
     libjpeg-dev zlib1g-dev libpng-dev libfreetype6-dev \
-    libatlas-base-dev liblapack-dev gfortran \
-    libx11-dev libxcb1 libx11-xcb-dev libxrender-dev libxi-dev libxtst-dev libxext-dev \
+    libopenblas-dev liblapack-dev gfortran \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
