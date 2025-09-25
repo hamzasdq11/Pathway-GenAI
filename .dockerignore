@@ -162,3 +162,5 @@ Thumbs.db
 *.tmp
 *.temp
 *~
+# allow readme for docker build
+!README.md
