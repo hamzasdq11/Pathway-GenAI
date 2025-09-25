@@ -38,4 +38,13 @@ get-pip.py
 temp
 tempdist
 settings.json
-watchlist_settings.json
+watchlist_settings.json.venv_genai/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+equinova-terminal-desktop/src-tauri/target/
+node_modules/
+dist/
+build/
