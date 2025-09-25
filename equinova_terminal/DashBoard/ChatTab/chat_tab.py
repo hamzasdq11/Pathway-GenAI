@@ -3,7 +3,7 @@
 import dearpygui.dearpygui as dpg
 import time
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 import re
 from equinova_terminal.utils.base_tab import BaseTab
@@ -545,6 +545,7 @@ class ChatTab(BaseTab):
                 self.safe_add_text(" | ", color=self.BLOOMBERG_GRAY)
                 user_type = self.app.get_user_type().upper()
                 self.safe_add_text(f"USER: {user_type}", color=self.BLOOMBERG_WHITE)
+    
         except Exception as e:
             error(f"[CHAT_TAB] Status bar creation failed: {str(e)}")
 
@@ -1009,7 +1010,7 @@ class ChatTab(BaseTab):
         """Clear input field"""
         self.safe_set_value("message_input_field", "")
         self.safe_set_value("input_status", "Ready")
-
+     
     def new_chat_callback(self):
         """OPTIMIZED: Create new chat"""
         try:
@@ -1091,7 +1092,6 @@ class ChatTab(BaseTab):
 
         except Exception as e:
             error(f"[CHAT_TAB] Delete session callback failed: {str(e)}")
-
 
 # PERFORMANCE: Alias the optimized class to maintain compatibility
 ChatTab = ChatTab

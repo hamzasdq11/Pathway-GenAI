@@ -3,16 +3,20 @@
 import requests
 from typing import Dict, Any, List
 from equinova_terminal.utils.Logging.logger import info, error, warning, monitor_performance
-
+import os
+import time
+import uuid
 
 class EquiNovaAPIClient:
 
     def __init__(self, session_data: Dict[str, Any]):
-        self.api_base = "https://finceptbackend.share.zrok.io"
+        self.api_base = os.getenv("EQUINOVA_API_BASE", "http://127.0.0.1:8899")
         self.session_data = session_data
         self.api_key = session_data.get("api_key")
         self.user_type = session_data.get("user_type", "guest")
         self.request_count = 0
+        self.chat_base = os.getenv("EQUINOVA_CHAT_BASE", "http://127.0.0.1:8899").rstrip("/")
+        self._local_sessions: dict[str, dict] = {}
 
         info("API client initialized", context={"user_type": self.user_type, "has_api_key": bool(self.api_key)})
 
@@ -142,177 +146,122 @@ class EquiNovaAPIClient:
             "message": "Forced logout completed - session cleared locally"
         }
 
+        # ============================================
+    # CHAT ENDPOINTS (LOCAL BRIDGE → FastAPI /chat)
     # ============================================
-    # CHAT ENDPOINTS (NEW)
-    # ============================================
+
+    # We mirror the shapes the UI expects, but keep sessions in-memory.
+    # Only the AI reply goes to the local FastAPI service (which calls OpenAI).
+
+    def _ensure_session(self, session_uuid: str) -> dict:
+        return self._local_sessions.setdefault(session_uuid, {
+            "session": {
+                "session_uuid": session_uuid,
+                "title": "New Conversation",
+                "created_at": int(time.time()),
+                "updated_at": int(time.time()),
+            },
+            "messages": []  # [{role: "user"|"assistant", content: str, ts: int}]
+        })
 
     def get_chat_sessions(self, limit: int = 50) -> Dict[str, Any]:
-        """Get user's chat sessions"""
-        params = {"limit": limit}
-        result = self.make_request("GET", "/chat/sessions", params=params)
-
-        if result["success"] and result["data"].get("success"):
-            return {
-                "success": True,
-                "sessions": result["data"]["data"]["sessions"],
-                "total": result["data"]["data"].get("total", 0),
-                "user_type": result["data"]["data"].get("user_type")
-            }
+        sessions = [
+            s["session"] for s in self._local_sessions.values()
+        ]
+        sessions.sort(key=lambda x: x.get("updated_at", 0), reverse=True)
         return {
-            "success": False,
-            "sessions": [],
-            "error": result.get("error", "Failed to get chat sessions")
+            "success": True,
+            "sessions": sessions[:limit],
+            "total": len(sessions),
+            "user_type": self.user_type,
         }
 
     def create_chat_session(self, title: str = "New Conversation") -> Dict[str, Any]:
-        """Create new chat session"""
-        data = {"title": title}
-        result = self.make_request("POST", "/chat/sessions", data)
-
-        if result["success"] and result["data"].get("success"):
-            return {
-                "success": True,
-                "session": result["data"]["data"]["session"],
-                "message": result["data"]["data"].get("message", "Session created")
-            }
+        session_uuid = str(uuid.uuid4())
+        store = self._ensure_session(session_uuid)
+        store["session"]["title"] = title or "New Conversation"
+        store["session"]["updated_at"] = int(time.time())
         return {
-            "success": False,
-            "error": result.get("error", "Failed to create chat session")
+            "success": True,
+            "session": store["session"],
+            "message": "Session created",
         }
 
     def get_chat_session(self, session_uuid: str) -> Dict[str, Any]:
-        """Get specific chat session with messages"""
-        result = self.make_request("GET", f"/chat/sessions/{session_uuid}")
-
-        if result["success"] and result["data"].get("success"):
-            session_detail = result["data"]["data"]
-            return {
-                "success": True,
-                "session": session_detail["session"],
-                "messages": session_detail["messages"],
-                "total_messages": session_detail["total_messages"]
-            }
+        if session_uuid not in self._local_sessions:
+            # Create on-demand so the UI never breaks
+            self._ensure_session(session_uuid)
+        store = self._local_sessions[session_uuid]
         return {
-            "success": False,
-            "error": result.get("error", "Failed to get chat session")
+            "success": True,
+            "session": store["session"],
+            "messages": store["messages"],
+            "total_messages": len(store["messages"]),
         }
 
     def send_chat_message(self, session_uuid: str, content: str) -> Dict[str, Any]:
-        """Send message to chat session"""
-        data = {"content": content}
-        result = self.make_request("POST", f"/chat/sessions/{session_uuid}/messages", data)
+        """Send message directly to the /chat endpoint"""
+        try:
+            url = f"{self.chat_base}/chat"
+            payload = {"message": content, "model": "gpt-4o-mini"}
+            headers = self.get_headers()
 
-        if result["success"] and result["data"].get("success"):
-            return {
-                "success": True,
-                "user_message": result["data"]["data"]["user_message"],
-                "ai_message": result["data"]["data"]["ai_message"],
-                "new_title": result["data"]["data"].get("new_title")
-            }
-        return {
-            "success": False,
-            "error": result.get("error", "Failed to send message")
-        }
+            resp = requests.post(url, json=payload, headers=headers, timeout=20)
+
+            if resp.status_code == 200:
+                data = resp.json()
+                ai_reply = data.get("reply", "")
+
+                return {
+                    "success": True,
+                    "user_message": {"content": content},
+                    "ai_message": {"content": ai_reply},
+                    "new_title": None
+                }
+
+            return {"success": False, "error": f"HTTP {resp.status_code}"}
+
+        except Exception as e:
+            error(f"[APIClient] send_chat_message error: {str(e)}")
+            return {"success": False, "error": str(e)}
 
     def activate_chat_session(self, session_uuid: str) -> Dict[str, Any]:
-        """Activate a chat session"""
-        result = self.make_request("PUT", f"/chat/sessions/{session_uuid}/activate")
-
-        if result["success"] and result["data"].get("success"):
-            return {
-                "success": True,
-                "message": result["data"]["data"].get("message", "Session activated")
-            }
-        return {
-            "success": False,
-            "error": result.get("error", "Failed to activate session")
-        }
+        if session_uuid not in self._local_sessions:
+            self._ensure_session(session_uuid)
+        return {"success": True, "message": "Session activated"}
 
     def update_chat_title(self, session_uuid: str, new_title: str) -> Dict[str, Any]:
-        """Update chat session title"""
-        data = {"title": new_title}
-        result = self.make_request("PUT", f"/chat/sessions/{session_uuid}/title", data)
-
-        if result["success"] and result["data"].get("success"):
-            return {
-                "success": True,
-                "new_title": result["data"]["data"]["new_title"],
-                "message": result["data"]["data"].get("message", "Title updated")
-            }
-        return {
-            "success": False,
-            "error": result.get("error", "Failed to update title")
-        }
+        if session_uuid not in self._local_sessions:
+            return {"success": False, "error": "Session not found"}
+        store = self._local_sessions[session_uuid]
+        store["session"]["title"] = new_title or store["session"]["title"]
+        store["session"]["updated_at"] = int(time.time())
+        return {"success": True, "new_title": store["session"]["title"], "message": "Title updated"}
 
     def delete_chat_session(self, session_uuid: str) -> Dict[str, Any]:
-        """Delete chat session"""
-        result = self.make_request("DELETE", f"/chat/sessions/{session_uuid}")
-
-        if result["success"] and result["data"].get("success"):
-            return {
-                "success": True,
-                "message": result["data"]["data"].get("message", "Session deleted")
-            }
-        return {
-            "success": False,
-            "error": result.get("error", "Failed to delete session")
-        }
+        if session_uuid in self._local_sessions:
+            del self._local_sessions[session_uuid]
+        return {"success": True, "message": "Session deleted"}
 
     def get_chat_stats(self) -> Dict[str, Any]:
-        """Get chat statistics"""
-        result = self.make_request("GET", "/chat/stats")
-
-        if result["success"] and result["data"].get("success"):
-            return {
-                "success": True,
-                "stats": result["data"]["data"]
-            }
-        return {
-            "success": False,
-            "error": result.get("error", "Failed to get chat stats")
-        }
+        total_sessions = len(self._local_sessions)
+        total_messages = sum(len(s["messages"]) for s in self._local_sessions.values())
+        return {"success": True, "stats": {"total_sessions": total_sessions, "total_messages": total_messages}}
+    
 
     def bulk_delete_chat_sessions(self, session_uuids: List[str]) -> Dict[str, Any]:
-        """Bulk delete chat sessions (registered users only)"""
-        if self.user_type != "registered":
-            return {"success": False, "error": "Only available for registered users"}
-
-        data = {"session_uuids": session_uuids}
-        result = self.make_request("DELETE", "/chat/sessions/bulk-delete", data)
-
-        if result["success"] and result["data"].get("success"):
-            info("Bulk chat sessions deleted", context={"count": result["data"]["data"]["deleted_count"]})
-            return {
-                "success": True,
-                "deleted_count": result["data"]["data"]["deleted_count"],
-                "message": result["data"]["data"].get("message", "Sessions deleted")
-            }
-        return {
-            "success": False,
-            "error": result.get("error", "Failed to delete sessions")
-        }
+        deleted = 0
+        for uid in session_uuids or []:
+            if uid in self._local_sessions:
+                del self._local_sessions[uid]
+                deleted += 1
+        return {"success": True, "deleted_count": deleted, "message": "Sessions deleted"}
 
     def export_chat_sessions(self, session_uuids: List[str] = None, format_type: str = "json") -> Dict[str, Any]:
-        """Export chat sessions (registered users only)"""
-        if self.user_type != "registered":
-            return {"success": False, "error": "Only available for registered users"}
-
-        data = {
-            "session_uuids": session_uuids or [],
-            "format": format_type
-        }
-        result = self.make_request("POST", "/chat/export", data)
-
-        if result["success"] and result["data"].get("success"):
-            info("Chat sessions exported", context={"format": format_type, "count": len(session_uuids or [])})
-            return {
-                "success": True,
-                "export_data": result["data"]["data"]
-            }
-        return {
-            "success": False,
-            "error": result.get("error", "Failed to export sessions")
-        }
+        # Minimal export that matches prior shape
+        uuids = session_uuids or list(self._local_sessions.keys())
+        out = {uid: self._local_sessions[uid] for uid in uuids if uid in self._local_sessions}
+        return {"success": True, "export_data": {"format": format_type, "sessions": out}}
 
     # ============================================
     # DATABASE OPERATIONS
