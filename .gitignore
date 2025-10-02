@@ -20,9 +20,3 @@ webapi/cache/
 
 # Local data/exports
 dbnomics_export_*.csv
-
-# local-only
-.env
-equinova/
-webapi/__init__.py
-webapi/pathway_livebus.py.bak2
