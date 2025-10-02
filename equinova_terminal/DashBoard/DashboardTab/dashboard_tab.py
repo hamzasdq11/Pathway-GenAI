@@ -67,6 +67,14 @@ class DashboardTab(BaseTab):
 
                 # Start immediate background fetch (non-blocking)
                 self.start_background_updates()
+                # start UI tick safely
+                dpg.set_frame_callback(1, self._ui_tick)
+                # --- UI timer setup ---
+                self.ui_interval = 1.0  # seconds
+                self.ids = {
+                    "clock": None,
+                    "status": {"dot": None, "text": None, "last": None, "market": None}
+                }
 
                 info("Dashboard Tab initialized successfully",
                      context={'yfinance_available': YFINANCE_AVAILABLE,
@@ -561,6 +569,7 @@ class DashboardTab(BaseTab):
             with logger.operation("create_dashboard_content"):
                 info("Creating dashboard tab content")
 
+
                 # Top bar with branding and search
                 with dpg.group(horizontal=True):
                     dpg.add_text("EQUINOVA", color=self.BLOOMBERG_ORANGE)
@@ -569,8 +578,8 @@ class DashboardTab(BaseTab):
                     dpg.add_input_text(label="", default_value="Enter Command", width=300)
                     dpg.add_button(label="Search", width=80)
                     dpg.add_text(" | ", color=self.BLOOMBERG_GRAY)
-                    dpg.add_text(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-
+                    
+                    self.ids["clock"] = dpg.add_text(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
                 dpg.add_separator()
 
                 # Function keys
@@ -595,8 +604,26 @@ class DashboardTab(BaseTab):
                 # Bottom section
                 dpg.add_separator()
                 self.create_bottom_section()
-
+                # start UI timer after all widgets are created (context is ready)
+                # schedule the first UI tick on the *next* frame
+                try:
+                    next_frame = dpg.get_frame_count() + 1
+                    dpg.set_frame_callback(next_frame, self._ui_tick)
+                except Exception as e:
+                    error("Failed to schedule first _ui_tick", context={"error": str(e)}, exc_info=True)  
+                # Ensure a per-frame UI refresh using the render callback
+                try:
+                    dpg.set_render_callback(self._ui_tick)
+                except Exception as e:
+                    error("Failed to set render callback for _ui_tick", context={"error": str(e)}, exc_info=True) 
+                # Kick the loop: call once + schedule the next frame
+                self._ui_tick()
+                self._schedule_next_frame()     
+                # Start background data refresh loop (every 10s)
+                self._schedule_background_updates(interval=10)       
                 info("Dashboard tab content created successfully")
+                # kick off first tick immediately
+                self._ui_tick()
 
         except Exception as e:
             error("Error in create_content", context={'error': str(e)}, exc_info=True)
@@ -617,14 +644,18 @@ class DashboardTab(BaseTab):
                 dpg.add_table_column(label="Value")
                 dpg.add_table_column(label="Change %")
 
+                # capture ids so we can update these cells later
+                self.ids["indices"] = {}
                 with self._lock:
                     for index, data in self.indices.items():
                         with dpg.table_row():
                             dpg.add_text(self.safe_text_display(index))
-                            dpg.add_text(f"{data['value']:.2f}")
-                            change_color = self.BLOOMBERG_GREEN if data['change'] > 0 else self.BLOOMBERG_RED
-                            dpg.add_text(f"{data['change']:+.2f}%", color=change_color)
-
+                            val_id = dpg.add_text(f"{data['value']:.2f}")
+                            chg_id = dpg.add_text(
+                                f"{data['change']:+.2f}%",
+                                color=self.BLOOMBERG_GREEN if data['change'] > 0 else self.BLOOMBERG_RED
+                            )
+                            self.ids["indices"][index] = {"value": val_id, "chg": chg_id}
             dpg.add_separator()
 
             # Economic indicators
@@ -662,8 +693,9 @@ class DashboardTab(BaseTab):
                     dpg.add_text("TOP STOCKS", color=self.BLOOMBERG_ORANGE)
 
                     # Stock table
+
                     with dpg.table(header_row=True, borders_innerH=True, borders_outerH=True,
-                                   scrollY=True, height=300):
+                                scrollY=True, height=300):
                         dpg.add_table_column(label="Ticker")
                         dpg.add_table_column(label="Last")
                         dpg.add_table_column(label="Chg")
@@ -672,21 +704,30 @@ class DashboardTab(BaseTab):
                         dpg.add_table_column(label="High")
                         dpg.add_table_column(label="Low")
 
+                        # capture ids for live updates
+                        self.ids["stocks"] = {}
                         with self._lock:
                             for ticker in self.tickers:
                                 data = self.stock_data.get(ticker, {})
                                 with dpg.table_row():
                                     dpg.add_text(self.safe_text_display(ticker))
-                                    dpg.add_text(f"{data.get('price', 0):.2f}")
+                                    p  = dpg.add_text(f"{data.get('price', 0):.2f}")
+                                    col = self.BLOOMBERG_GREEN if data.get('change_pct', 0) > 0 else self.BLOOMBERG_RED
+                                    ch = dpg.add_text(f"{data.get('change_val', 0):+.2f}", color=col)
+                                    cp = dpg.add_text(f"{data.get('change_pct', 0):+.2f}%", color=col)
+                                    v  = dpg.add_text(f"{data.get('volume', 0):,}")
+                                    hi = dpg.add_text(f"{data.get('high', 0):.2f}")
+                                    lo = dpg.add_text(f"{data.get('low', 0):.2f}")
 
-                                    change_color = self.BLOOMBERG_GREEN if data.get('change_pct',
-                                                                                    0) > 0 else self.BLOOMBERG_RED
-                                    dpg.add_text(f"{data.get('change_val', 0):+.2f}", color=change_color)
-                                    dpg.add_text(f"{data.get('change_pct', 0):+.2f}%", color=change_color)
-
-                                    dpg.add_text(f"{data.get('volume', 0):,}")
-                                    dpg.add_text(f"{data.get('high', 0):.2f}")
-                                    dpg.add_text(f"{data.get('low', 0):.2f}")
+                                    # store IDs for updating later
+                                    self.ids["stocks"][ticker] = {
+                                        "price": p,
+                                        "chg": ch,
+                                        "chgp": cp,
+                                        "vol": v,
+                                        "high": hi,
+                                        "low": lo
+                                    }
 
                     # Stock details
                     dpg.add_separator()
@@ -825,17 +866,18 @@ class DashboardTab(BaseTab):
                 status_color = self.BLOOMBERG_ORANGE if self.data_loading else self.BLOOMBERG_GREEN
                 status_text = "UPDATING" if self.data_loading else "CONNECTED"
 
-            dpg.add_text("●", color=status_color)
-            dpg.add_text(status_text, color=status_color)
+            # store IDs so we can update later
+            self.ids["status"]["dot"]  = dpg.add_text("●", color=status_color)
+            self.ids["status"]["text"] = dpg.add_text(status_text, color=status_color)
             dpg.add_text(" | ", color=self.BLOOMBERG_GRAY)
             dpg.add_text("LIVE DATA", color=self.BLOOMBERG_ORANGE)
             dpg.add_text(" | ", color=self.BLOOMBERG_GRAY)
 
             current_hour = datetime.datetime.now().hour
             if 9 <= current_hour < 16:
-                dpg.add_text("MARKET OPEN", color=self.BLOOMBERG_GREEN)
+                self.ids["status"]["market"] = dpg.add_text("MARKET OPEN",  color=self.BLOOMBERG_GREEN)
             else:
-                dpg.add_text("MARKET CLOSED", color=self.BLOOMBERG_RED)
+                self.ids["status"]["market"] = dpg.add_text("MARKET CLOSED", color=self.BLOOMBERG_RED)
 
             dpg.add_text(" | ", color=self.BLOOMBERG_GRAY)
             dpg.add_text("SERVER: NY-01", color=self.BLOOMBERG_WHITE)
@@ -846,9 +888,10 @@ class DashboardTab(BaseTab):
             with self._lock:
                 if self.last_update:
                     last_update_str = datetime.datetime.fromtimestamp(self.last_update).strftime('%H:%M:%S')
-                    dpg.add_text(f"LAST UPDATE: {last_update_str}", color=self.BLOOMBERG_WHITE)
+                    initial_last = f"LAST UPDATE: {last_update_str}"
                 else:
-                    dpg.add_text("LAST UPDATE: --:--:--", color=self.BLOOMBERG_WHITE)
+                    initial_last = "LAST UPDATE: --:--:--"
+            self.ids["status"]["last"] = dpg.add_text(initial_last, color=self.BLOOMBERG_WHITE)
 
             dpg.add_text(" | ", color=self.BLOOMBERG_GRAY)
             dpg.add_text("LATENCY: 12ms", color=self.BLOOMBERG_GREEN)
@@ -865,6 +908,119 @@ class DashboardTab(BaseTab):
             warning("Resize handling failed", context={'error': str(e)})
 
     @monitor_performance
+
+    def _ui_tick(self, sender=None, app_data=None, user_data=None):
+        """Runs on DearPyGui main thread; refreshes UI and re-schedules ~every 1s."""
+        try:
+            debug("UI TICK HEARTBEAT")
+
+            # 1) live clock
+            if self.ids.get("clock"):
+                dpg.set_value(
+                    self.ids["clock"],
+                    datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                )
+
+            # 2) status bar
+            self._update_status_bar()
+
+            # 3) update GLOBAL INDICES cells
+            with self._lock:
+                indices_snapshot = dict(self.indices)
+            for name, cell_ids in self.ids.get("indices", {}).items():
+                dat = indices_snapshot.get(name, {})
+                val = dat.get("value", 0.0)
+                chg = dat.get("change", 0.0)
+                dpg.set_value(cell_ids["value"], f"{val:.2f}")
+                dpg.set_value(cell_ids["chg"], f"{chg:+.2f}%")
+                dpg.configure_item(
+                    cell_ids["chg"],
+                    color=self.BLOOMBERG_GREEN if chg > 0 else self.BLOOMBERG_RED
+                )
+
+            # 4) update TOP STOCKS table cells
+            with self._lock:
+                stocks_snapshot = {t: dict(v) for t, v in self.stock_data.items()}
+            for tkr, cells in self.ids.get("stocks", {}).items():
+                d = stocks_snapshot.get(tkr, {})
+                chgp = d.get("change_pct", 0.0)
+                col  = self.BLOOMBERG_GREEN if chgp > 0 else self.BLOOMBERG_RED
+                dpg.set_value(cells["price"], f"{d.get('price', 0):.2f}")
+                dpg.set_value(cells["chg"],   f"{d.get('change_val', 0):+.2f}")
+                dpg.set_value(cells["chgp"],  f"{chgp:+.2f}%")
+                dpg.configure_item(cells["chg"],  color=col)
+                dpg.configure_item(cells["chgp"], color=col)
+                dpg.set_value(cells["vol"],  f"{d.get('volume', 0):,}")
+                dpg.set_value(cells["high"], f"{d.get('high', 0):.2f}")
+                dpg.set_value(cells["low"],  f"{d.get('low', 0):.2f}")
+
+        except Exception as e:
+            error("UI tick failed", context={"error": str(e)}, exc_info=True)
+        finally:
+            # Re-schedule roughly 1 second later (≈60 frames). Try both DPG signatures.
+            try:
+                dpg.set_frame_callback(
+                    frame=dpg.get_frame_count() + 60,
+                    callback=self._ui_tick
+                )
+            except TypeError:
+                # fallback for positional signature
+                dpg.set_frame_callback(dpg.get_frame_count() + 60, self._ui_tick)
+            except Exception as e:
+                warning("Failed to reschedule _ui_tick", context={"error": str(e)})
+
+    def _schedule_next_frame(self):
+        """Schedule _ui_tick for the very next frame, trying both DPG signatures."""
+        try:
+            # Newer-style signature (most likely on v2.x): named params
+            dpg.set_frame_callback(callback=self._ui_tick, frame=dpg.get_frame_count() + 1)
+            return
+        except TypeError:
+            pass
+        except Exception as e:
+            warning("set_frame_callback (named args) failed", context={"error": str(e)})
+
+        try:
+            # Older-style signature: (frame, callback)
+            dpg.set_frame_callback(dpg.get_frame_count() + 1, self._ui_tick)
+            return
+        except Exception as e:
+            error("set_frame_callback (positional args) failed", context={"error": str(e)}, exc_info=True)
+
+    def _update_status_bar(self):
+        """Refresh bottom status bar widgets based on current state"""
+        try:
+            with self._lock:
+                updating = self.data_loading
+                last_ts  = self.last_update
+
+            # dot + text color & label
+            if self.ids["status"]["dot"]:
+                dpg.configure_item(self.ids["status"]["dot"],
+                                color=self.BLOOMBERG_ORANGE if updating else self.BLOOMBERG_GREEN)
+            if self.ids["status"]["text"]:
+                dpg.configure_item(self.ids["status"]["text"],
+                                color=self.BLOOMBERG_ORANGE if updating else self.BLOOMBERG_GREEN)
+                dpg.set_value(self.ids["status"]["text"], "UPDATING" if updating else "CONNECTED")
+
+            # market open/closed (simple hours logic for now)
+            if self.ids["status"]["market"]:
+                hr = datetime.datetime.now().hour
+                open_now = 9 <= hr < 16
+                dpg.set_value(self.ids["status"]["market"], "MARKET OPEN" if open_now else "MARKET CLOSED")
+                dpg.configure_item(self.ids["status"]["market"],
+                                color=self.BLOOMBERG_GREEN if open_now else self.BLOOMBERG_RED)
+
+            # last update timestamp
+            if self.ids["status"]["last"]:
+                if last_ts:
+                    last_txt = f"LAST UPDATE: {datetime.datetime.fromtimestamp(last_ts).strftime('%H:%M:%S')}"
+                else:
+                    last_txt = "LAST UPDATE: --:--:--"
+                dpg.set_value(self.ids["status"]["last"], last_txt)
+
+        except Exception as e:
+            warning("Status bar update failed", context={"error": str(e)})
     def cleanup(self):
         """Clean up resources"""
         try:
@@ -893,6 +1049,17 @@ class DashboardTab(BaseTab):
                 info("Data update already in progress")
         except Exception as e:
             error("Force refresh failed", context={'error': str(e)}, exc_info=True)
+    def _schedule_background_updates(self, interval: int = 10):
+        """Run update_data_background() every `interval` seconds in a background thread."""
+        def _loop():
+            try:
+                self.update_data_background()
+            finally:
+                # schedule the next run
+                threading.Timer(interval, _loop).start()
+        # kick off first run
+        threading.Timer(interval, _loop).start()
+        info(f"Background updates scheduled every {interval}s")
 
     def get_market_status(self) -> Dict[str, Any]:
         """Get current market status information"""
@@ -1010,3 +1177,4 @@ class DashboardTab(BaseTab):
         except Exception as e:
             error("Failed to get performance stats", context={'error': str(e)}, exc_info=True)
             return {'error': str(e)}
+    
