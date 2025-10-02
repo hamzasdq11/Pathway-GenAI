@@ -1305,11 +1305,51 @@ class SplashAuth:
             pass  # Avoid exceptions in destructor
 
 
-from equinova_terminal.utils.Managers.session_manager import session_manager
-
 @monitor_performance
-def show_authentication_splash(is_first_time_user: bool = False) -> Dict[str, Any]:
-    """
-    Simplified splash: bypass everything and return unlimited local session.
-    """
-    return session_manager.create_unlimited_local_session()
+def show_authentication_splash(is_first_time_user=False) -> Dict[str, Any]:
+    """Show splash with optimized performance and preserved security"""
+    splash = None
+    try:
+        with operation("show_authentication_splash", context={'first_time_user': is_first_time_user}):
+            splash = SplashAuth(is_first_time_user=is_first_time_user)
+            result = splash.show_splash()
+
+            # SECURITY: In strict mode, don't allow fallback
+            if is_strict_mode() and not result.get("authenticated"):
+                logger.error("Authentication failed in strict mode")
+                return {
+                    "authenticated": False,
+                    "error": "API authentication required but failed"
+                }
+
+            logger.info("Authentication splash completed",
+                        context={
+                            'authenticated': result.get('authenticated'),
+                            'user_type': result.get('user_type')
+                        })
+            return result
+
+    except Exception as e:
+        logger.error("Splash error", context={'error': str(e)}, exc_info=True)
+
+        # SECURITY: In strict mode, return error
+        if is_strict_mode():
+            return {
+                "authenticated": False,
+                "error": f"Splash failed: {str(e)}"
+            }
+        else:
+            # SECURITY: Only secure fallback if not in strict mode
+            logger.warning("Using secure fallback authentication")
+            device_id = splash.generate_device_id() if splash else f"desktop_{uuid.uuid4().hex[:16]}"
+            return {
+                "user_type": "guest",
+                "authenticated": True,
+                "device_id": device_id,
+                "api_key": None,
+                "user_info": {},
+                "expires_at": None
+            }
+    finally:
+        if splash:
+            splash.cleanup()
