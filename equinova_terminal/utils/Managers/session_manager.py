@@ -411,7 +411,30 @@ class SessionManager:
         debug("Generated API headers", module="session",
               context={'has_api_key': bool(session_data and session_data.get("api_key"))})
         return headers
-
+    def create_unlimited_local_session(self) -> dict:
+        """
+        Create a local unlimited session: bypasses login, no request caps.
+        """
+        from datetime import datetime
+        session_data = {
+            "authenticated": True,
+            "api_key": "local-unlimited",
+            "user_type": "local",
+            "device_id": "dev-local",
+            "expires_at": None,
+            "daily_limit": None,
+            "requests_today": 0,
+            "fetched_at": datetime.now().isoformat(),
+            "api_version": config.API_VERSION,
+            "api_url": config.get_api_url()
+        }
+        # save to disk so next startup skips splash
+        try:
+            self.save_credentials_only(session_data)
+        except Exception:
+            # If save fails, continue — session still returned
+            pass
+        return session_data
     @monitor_performance
     def make_authenticated_request(self, session_data: Dict[str, Any], method: str, endpoint: str, **kwargs) -> Optional[requests.Response]:
         """Make authenticated API request"""
