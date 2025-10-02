@@ -241,3 +241,40 @@ def rag_search_api(q: str = Query(..., description="User query"),
         return hits
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+# ---------------- Guest / Device bootstrap (stubs) ----------------
+from pydantic import BaseModel
+from typing import Optional
+
+class DeviceRegisterIn(BaseModel):
+    device_id: Optional[str] = None
+    user_agent: Optional[str] = None
+
+class DeviceRegisterOut(BaseModel):
+    success: bool
+    device_id: str
+
+class GuestStatusOut(BaseModel):
+    success: bool
+    mode: str
+    guest: bool
+    limits: dict
+    session: dict
+
+@app.post("/device/register", response_model=DeviceRegisterOut)
+def device_register(body: DeviceRegisterIn):
+    did = body.device_id or "guest-device"
+    return DeviceRegisterOut(success=True, device_id=did)
+
+@app.get("/guest/status", response_model=GuestStatusOut)
+def guest_status():
+    return GuestStatusOut(
+        success=True,
+        mode="guest",
+        guest=True,
+        limits={"requests_per_day": 50, "expires_hours": 24},
+        session={
+            "id": "guest-session-001",
+            "created_at": "now",
+            "api_key": "temp-guest",
+        },
+    )

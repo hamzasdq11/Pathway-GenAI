@@ -841,7 +841,7 @@ class EquiNovaAPIClient:
 
         # Handle common error scenarios
         if "Connection error" in error:
-            return "API server is not available. Please check if the server is running on https://finceptbackend.share.zrok.io"
+            return "API server is not available. Please check if the server is running on http://127.0.0.1:8899"
         elif "timeout" in error.lower():
             return "Request timed out. Please try again."
         elif "401" in str(result.get("status_code", "")):

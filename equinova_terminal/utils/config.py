@@ -19,7 +19,7 @@ class APIConfig:
     """Centralized API configuration"""
 
     # MAIN API CONFIGURATION - CHANGE ONLY HERE
-    API_BASE_URL = os.getenv("EQUINOVA_API_URL", "https://finceptbackend.share.zrok.io")
+    API_BASE_URL = os.getenv("EQUINOVA_API_BASE", os.getenv("EQUINOVA_API_URL", "http://127.0.0.1:8899"))
 
     # Alternative URLs for fallback (if needed)
     FALLBACK_URLS = [
@@ -131,7 +131,7 @@ class APIConfig:
     def set_api_url(cls, new_url: str):
         """Update API URL at runtime"""
         old_url = cls.API_BASE_URL
-        cls.API_BASE_URL = new_url.rstrip('/')
+        cls.API_BASE_URL = os.getenv("EQUINOVA_API_BASE", os.getenv("EQUINOVA_API_URL", "http://127.0.0.1:8899"))
 
         info("API URL updated", module="config",
              context={'old_url': old_url, 'new_url': cls.API_BASE_URL})

@@ -1,7 +1,7 @@
 
-Pathway-GenAI 🚀
+EquiNova Terminal 🚀
 
-Pathway-GenAI is a real-time financial intelligence platform that combines:
+EquiNova Terminal is a real-time financial intelligence platform that combines:
 	•	Pathway live streaming for continuous data ingestion (markets & news).
 	•	OpenAI GPT models for natural language reasoning.
 	•	RAG (Retrieval-Augmented Generation) for context-grounded answers.

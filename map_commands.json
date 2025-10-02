@@ -1,1 +1,1 @@
-{"commands": ["set_marker_type:Ship", "toggle_ships", "toggle_routes", "set_marker_type:Ship"]}
+{"commands": ["set_marker_type:Ship", "toggle_ships", "toggle_routes", "set_marker_type:Ship", "set_marker_type:Ship", "toggle_routes", "set_marker_type:Ship", "toggle_routes", "toggle_ships", "toggle_routes", "toggle_ships", "clear_all", "toggle_routes", "clear_all", "set_marker_type:Ship"]}

@@ -1,26 +1,20 @@
 [
   {
+    "lat": 19.2760009765625,
+    "lng": 72.87770080566406,
+    "title": "china",
+    "type": "Ship"
+  },
+  {
     "lat": 19.076,
     "lng": 72.8777,
     "title": "Mumbai Port",
     "type": "Port"
   },
   {
-    "lat": 22.5726,
-    "lng": 88.3639,
-    "title": "Kolkata Port",
-    "type": "Port"
-  },
-  {
-    "lat": 13.0827,
-    "lng": 80.2707,
-    "title": "Chennai Port",
-    "type": "Port"
-  },
-  {
-    "lat": 9.9312,
-    "lng": 76.2673,
-    "title": "Cochin Port",
+    "lat": 19.076,
+    "lng": 72.8777,
+    "title": "Mumbai Port",
     "type": "Port"
   },
   {
@@ -34,5 +28,23 @@
     "lng": 121.4737,
     "title": "Shanghai Port",
     "type": "Port"
+  },
+  {
+    "lat": 31.2304,
+    "lng": 121.4737,
+    "title": "Shanghai Port",
+    "type": "Port"
+  },
+  {
+    "lat": 1.3521,
+    "lng": 103.8198,
+    "title": "Singapore Port",
+    "type": "Port"
+  },
+  {
+    "lat": 19.076000213623047,
+    "lng": 72.87770080566406,
+    "title": "New Marker",
+    "type": "Ship"
   }
 ]
