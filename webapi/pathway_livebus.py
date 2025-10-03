@@ -48,7 +48,10 @@ except Exception as e:
     print("[livebus] initial write error:", e, flush=True)
 
 # Start the background writer thread
-threading.Thread(target=_writer_loop, args=(20,), daemon=True).start()
+_writer = threading.Thread(target=_writer_loop, args=(20,), daemon=False)
+_writer.start()
 
 # Keep Pathway engine alive
 pw.run()
+# Ensure process stays up even if Pathway graph completes
+_writer.join()

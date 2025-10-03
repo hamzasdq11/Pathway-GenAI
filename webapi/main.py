@@ -66,6 +66,15 @@ def _format_cached_context(j):
     row = " | ".join([f"{m['symbol']}: {m['last']} ({m['d1_pct']}%)" for m in mk[:5]])
     ts = j.get("ts_utc", "?")
     return f"(Live snapshot @ {ts})\nMarkets: {row}\nTop headlines: {heads}"
+def _format_market_line(j):
+    if not j:
+        return None
+    mk = j.get("markets", [])
+    if not mk:
+        return None
+    row = " | ".join([f"{m['symbol']}: {m['last']} ({m['d1_pct']}%)" for m in mk])
+    ts = j.get("ts_utc", "?")
+    return f"(Live markets @ {ts})\nMarkets: {row}"
 
 # ------------------- Health & Test Endpoints -------------------
 
@@ -143,15 +152,22 @@ def chat(req: ChatIn):
     try:
         sys_content = "You are EquiNova AI assistant. Be concise and helpful."
         if req.include_live:
-           snap = _load_cached_snapshot()
-           cached_ctx = _format_cached_context(snap)
-           if cached_ctx:
-              sys_content += "\n\n" + cached_ctx
-           else:
-               try:
-                  sys_content += "\n\n" + build_live_context(req.symbols)
-               except Exception:
-                  sys_content += "\n\n(Live snapshot unavailable)"
+            snap = _load_cached_snapshot()
+            mline = _format_market_line(snap)
+            if mline:
+                sys_content += "\n\n" + mline
+            else:
+                try:
+                    # fallback: build markets directly (no headlines)
+                    mkts = get_market_snapshot(req.symbols)
+                    if mkts:
+                        row = " | ".join(f"{m['symbol']}: {m['last']} ({m['d1_pct']}%)" for m in mkts)
+                        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+                        sys_content += f"\n\n(Live markets @ {now})\nMarkets: {row}"
+                    else:
+                        sys_content += "\n\n(Live markets unavailable)"
+                except Exception:
+                    sys_content += "\n\n(Live markets unavailable)"
         if req.include_rag:
             try:
                 hits = rag_search(req.message, topk=max(1, min(10, req.rag_k)))

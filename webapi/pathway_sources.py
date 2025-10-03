@@ -48,8 +48,17 @@ def fetch_news(feed_urls: List[str]) -> List[Dict[str, Any]]:
 
 # --- Pathway pipeline ---
 def build_pipeline():
-    symbols = ["SPY", "QQQ", "AAPL", "MSFT", "NVDA"]
-    feeds = ["https://feeds.a.dj.com/rss/RSSMarketsMain.xml"]
+    symbols = [
+    "SPY", "QQQ", "AAPL", "MSFT", "NVDA",
+    "GOOGL", "AMZN", "TSLA", "META", "NFLX",
+    "JPM", "GS", "BAC", "WMT", "TCS.NS"
+]
+    feeds = [
+    "https://feeds.a.dj.com/rss/RSSMarketsMain.xml",         # WSJ Markets
+    "https://www.investing.com/rss/news.rss",               # Investing.com
+    "https://www.moneycontrol.com/rss/MCtopnews.xml",       # Moneycontrol India
+    "https://www.cnbc.com/id/100003114/device/rss/rss.xml"  # CNBC Top News
+]
 
     market_stream = pw.io.python.iterate(fetch_market(symbols))
     news_stream = pw.io.python.iterate(fetch_news(feeds))

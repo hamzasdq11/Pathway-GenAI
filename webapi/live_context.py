@@ -6,7 +6,11 @@ from typing import List, Dict, Any, Optional
 import requests
 import yfinance as yf
 
-DEFAULT_SYMBOLS = ["SPY", "QQQ", "AAPL", "MSFT", "NVDA"]
+DEFAULT_SYMBOLS = [
+    "SPY", "QQQ", "AAPL", "MSFT", "NVDA",
+    "GOOGL", "AMZN", "TSLA", "META", "NFLX",
+    "JPM", "GS", "BAC", "WMT", "TCS.NS"
+]
 DEFAULT_FEEDS = [
     "https://feeds.a.dj.com/rss/RSSMarketsMain.xml",
     "https://www.cnbc.com/id/100003114/device/rss/rss.html",
@@ -36,7 +40,7 @@ def _parse_rss_titles(xml_text: str, limit: int = 10) -> List[Dict[str, str]]:
     return items
 
 def get_market_snapshot(symbols: Optional[List[str]] = None, max_symbols: int = 5) -> List[Dict[str, Any]]:
-    syms = (symbols or DEFAULT_SYMBOLS)[:max_symbols]
+    syms = symbols or DEFAULT_SYMBOLS
     out: List[Dict[str, Any]] = []
     for sym in syms:
         try:
@@ -53,7 +57,7 @@ def get_market_snapshot(symbols: Optional[List[str]] = None, max_symbols: int = 
             continue
     return out
 
-def get_news_snapshot(feeds: Optional[List[str]] = None, max_items: int = 6) -> List[Dict[str, str]]:
+def get_news_snapshot(feeds: Optional[List[str]] = None, max_items: int = 50) -> List[Dict[str, str]]:
     feed_urls = (feeds or DEFAULT_FEEDS)[:3]
     items: List[Dict[str, str]] = []
     for url in feed_urls:
@@ -72,7 +76,7 @@ def get_news_snapshot(feeds: Optional[List[str]] = None, max_items: int = 6) -> 
 
 def build_live_context(symbols: Optional[List[str]] = None) -> str:
     mkts = get_market_snapshot(symbols)
-    news = get_news_snapshot()
+    news = get_news_snapshot(max_items=50)
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     parts = [f"(Live snapshot @ {now})"]
     if mkts:

@@ -1,8 +1,9 @@
 import os, json, time, threading, math, hashlib
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Any
 import numpy as np
 from dotenv import load_dotenv
+from email.utils import parsedate_to_datetime
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 # Use the same cache file produced by pathway_livebus.py
 CACHE_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "cache", "live_snapshot.json"))
@@ -11,7 +12,7 @@ INDEX_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "cache", "r
 # --- Embeddings (OpenAI) ---
 try:
     from openai import OpenAI
-    _emb = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    _emb = OpenAI()  # auto-reads OPENAI_API_KEY from environment
 except Exception:
     _emb = None
 
@@ -42,16 +43,29 @@ def _save_json(path: str, obj: Any):
 
 def _normalize_news_items(snapshot: Dict[str, Any]) -> List[Dict[str, Any]]:
     items = []
+    cutoff = datetime.now(timezone.utc) - timedelta(days=3)
+
     for it in snapshot.get("news", []) or []:
         title = (it.get("title") or "").strip()
         if not title:
             continue
-        # we can enrich later (source, url, summary…)
-        items.append({
-            "id": _hash(title),
-            "title": title,
-            "published": it.get("published") or "",
-        })
+
+        pub_str = it.get("published") or ""
+        try:
+            pub_dt = parsedate_to_datetime(pub_str)
+            if pub_dt.tzinfo is None:  # naive datetime → make UTC
+                pub_dt = pub_dt.replace(tzinfo=timezone.utc)
+        except Exception:
+            pub_dt = datetime.min.replace(tzinfo=timezone.utc)
+
+        # only keep if recent enough
+        if pub_dt >= cutoff:
+            items.append({
+                "id": _hash(title),
+                "title": title,
+                "published": pub_str,
+            })
+
     return items
 
 def _cosine(a: np.ndarray, b: np.ndarray) -> float:
